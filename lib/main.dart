@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 import 'models/product.dart';
+import 'package:merryjays_pos/services/isar_service.dart';
+import 'screens/add_product_screen.dart';
 
 late Isar isar;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Get local directory for Isar storage
   final dir = await getApplicationDocumentsDirectory();
 
-  // Open Isar database instance
   isar = await Isar.open(
-    [], // Temporarily empty so code runner can build schema files
+    [ProductSchema],
     directory: dir.path,
   );
 
@@ -25,18 +25,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isarService = IsarService(isar);
+
     return MaterialApp(
-      title: 'merryjays POS',
+      title: 'Merryjays POS',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const Scaffold(
-        body: Center(
-          child: Text('merryjays POS - Isar Ready!'),
-        ),
-      ),
+      home: AddProductScreen(isarService: isarService),
     );
   }
 }
